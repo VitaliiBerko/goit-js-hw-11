@@ -18,3 +18,12 @@ body {
   max-width: 320px;
   margin-bottom: 16px;
 }
+
+.search {
+  display: flex;
+  justify-content: center;
+
+  background-color: blue;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}

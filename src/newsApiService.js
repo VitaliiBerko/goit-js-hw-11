@@ -4,16 +4,15 @@ import axios from 'axios';
 export default class NewsApiService {
   constructor() {
     this.searchQuery = '';
-    this.page = 1;
-    this.API_KEY = '31315876-ebaad9cfb6f2dd991d80baf37';
+    this.page = 1;    
   }
 
   fetchSearchQuery() {
+    const API_KEY= '31315876-ebaad9cfb6f2dd991d80baf37';
     return fetch(
-      `https://pixabay.com/api/?key=${this.API_KEY}&q=${this.searchQuery}&image_type=photo&page=${this.page}`
-    )
-    .then(r=>r.json())
-    .then(data => {
+      `https://pixabay.com/api/?key=${API_KEY}&q=${this.searchQuery}&image_type=photo&page=${this.page}`
+    ).then(r=>r.json())
+     .then(data => {
       this.incrementPage();
       return data.hits;
     });

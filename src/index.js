@@ -9,13 +9,13 @@ const loadMoreBtn = document.querySelector('.load-more');
 const newsApiService = new NewsApiService();
 
 
-// loadMoreBtn.disabled = true;
+
 
 console.log(formSubmitRefs);
 
 formSubmitRefs.addEventListener('submit', onClickSearchBtn);
-// loadMoreBtn.addEventListener('click', onLoadMore);
-// console.log(loadMoreBtn);
+loadMoreBtn.addEventListener('click', onLoadMore);
+
 
 function onClickSearchBtn(e) {
   e.preventDefault();
@@ -27,22 +27,22 @@ function onClickSearchBtn(e) {
 }
 
 function renderQueryCards(hits) {
-  const markup = hits.map((hit) => {
+  const markup = hits.map(({webformatURL, tags, likes, views, comments, downloads}) => {
 
       return `<div class="photo-card">
-  <img src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" />
+  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
   <div class="info">
     <p class="info-item">
-      <b>Likes${hit.likes}</b>
+      <b>Likes ${likes}</b>
     </p>
     <p class="info-item">
-      <b>Views</b>
+      <b>Views ${views}</b>
     </p>
     <p class="info-item">
-      <b>Comments</b>
+      <b>Comments ${comments}</b>
     </p>
     <p class="info-item">
-      <b>Downloads</b>
+      <b>Downloads ${downloads}</b>
     </p>
   </div>
 </div>`;
@@ -53,5 +53,7 @@ function renderQueryCards(hits) {
 }
 
 function onLoadMore () {
-    newsApiService.fetchSearchQuery()
+   newsApiService.fetchSearchQuery()
+   .then(renderQueryCards)
+    
 }

@@ -10,11 +10,13 @@ export default class NewsApiService {
   fetchSearchQuery() {
     const API_KEY= '31315876-ebaad9cfb6f2dd991d80baf37';
     return fetch(
-      `https://pixabay.com/api/?key=${API_KEY}&q=${this.searchQuery}&image_type=photo&page=${this.page}`
-    ).then(r=>r.json())
+      `https://pixabay.com/api/?key=${API_KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=40`
+    )
+    .then(r=>r.json())
+
      .then(data => {
       this.incrementPage();
-      return data.hits;
+      return data;
     });
   }
   incrementPage() {

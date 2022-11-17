@@ -6,15 +6,17 @@ import Notiflix from 'notiflix';
 const formSubmitRefs = document.querySelector('#search-form');
 const articlesContainer = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
+const cardRefs = document.querySelectorAll('.photo-card');
 const newsApiService = new NewsApiService();
 
 
 
 
-console.log(formSubmitRefs);
 
 formSubmitRefs.addEventListener('submit', onClickSearchBtn);
 loadMoreBtn.addEventListener('click', onLoadMore);
+
+loadMoreBtn.classList.add('visually-hidden');
 
 
 function onClickSearchBtn(e) {
@@ -24,21 +26,25 @@ function onClickSearchBtn(e) {
   
 
   newsApiService.fetchSearchQuery().then(    
-    hits=>{clearContainer(); renderQueryCards(hits)})
+    hits=>{clearContainer(); renderQueryCards(hits); loadMoreBtn.classList.remove('visually-hidden');
+   
+    })
  
   .catch(
     Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.')
   );
   
+  
+  
 }
 
 
 
-function renderQueryCards(hits) {
+function renderQueryCards({hits}) {
   const markup = hits.map(({webformatURL, tags, likes, views, comments, downloads}) => {
 
       return `<div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+  <img src="${webformatURL}" alt="${tags}" loading="lazy" width ="340 px"/>
   <div class="info">
     <p class="info-item">
       <b>Likes: ${likes}</b>
@@ -62,7 +68,17 @@ function renderQueryCards(hits) {
 
 function onLoadMore () {
   newsApiService.fetchSearchQuery()
-  .then(renderQueryCards)
+  .then(data => {renderQueryCards(data);
+    if(data.totalHits<=articlesContainer.children.length) {
+          Notiflix.Notify.info('We are sorry, but you have reached the end of search results.')
+          loadMoreBtn.classList.add('visually-hidden');
+        }
+    console.log(articlesContainer.children.length);})
+  // .then(data => {
+  //   if(data.totalHits===500) {
+  //     Notiflix.Notify.info('We are sorry, but you have reached the end of search results.')
+  //   }
+  // })
    
 }
 

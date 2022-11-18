@@ -1,23 +1,21 @@
-const baseUrl = '';
 import axios from 'axios';
 
 export default class NewsApiService {
   constructor() {
     this.searchQuery = '';
-    this.page = 1;    
+    this.page = 1;
   }
 
-  fetchSearchQuery() {
-    const API_KEY= '31315876-ebaad9cfb6f2dd991d80baf37';
-    return fetch(
-      `https://pixabay.com/api/?key=${API_KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=40`
-    )
-    .then(r=>r.json())
+  
+  async fetchSearchQuery() {
+    const API_KEY = '31315876-ebaad9cfb6f2dd991d80baf37';
 
-     .then(data => {
-      this.incrementPage();
-      return data;
-    });
+    const response = await axios(
+      `https://pixabay.com/api/?key=${API_KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=40`
+    );
+    const result = await response.data;
+    this.incrementPage();
+    return result;
   }
 
   incrementPage() {
@@ -34,5 +32,3 @@ export default class NewsApiService {
     this.searchQuery = newQuery;
   }
 }
-
-

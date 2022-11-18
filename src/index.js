@@ -1,12 +1,10 @@
 import './css/styles.css';
 import NewsApiService from './newsApiService';
-import axios from 'axios';
 import Notiflix from 'notiflix';
 
 const formSubmitRefs = document.querySelector('#search-form');
 const articlesContainer = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
-const cardRefs = document.querySelectorAll('.photo-card');
 const newsApiService = new NewsApiService();
 
 formSubmitRefs.addEventListener('submit', onClickSearchBtn);
@@ -14,27 +12,27 @@ loadMoreBtn.addEventListener('click', onLoadMore);
 
 loadMoreBtn.classList.add('visually-hidden');
 
-function onClickSearchBtn(e) {
-  e.preventDefault();
-  newsApiService.query = e.currentTarget.elements.searchQuery.value;
-  newsApiService.resetPage();
+async function onClickSearchBtn(e) {
+  try {
+    e.preventDefault();
+    newsApiService.query = e.currentTarget.elements.searchQuery.value;
+    newsApiService.resetPage();
 
-  newsApiService
-    .fetchSearchQuery()
-    .then(data => {
-      if (data.total !== 0) {
-        clearContainer();
-        renderQueryCards(data);
-        Notiflix.Notify.info(`"Hooray! We found ${data.totalHits} images."`);
-        loadMoreBtn.classList.remove('visually-hidden');
-      } else {
-        Notiflix.Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-        loadMoreBtn.classList.add('visually-hidden');
-      }
-    })
-    .catch(error => console.log(error));
+    const response = await newsApiService.fetchSearchQuery();
+    if (response.total !== 0) {
+      clearContainer();
+      renderQueryCards(response);
+      Notiflix.Notify.info(`"Hooray! We found ${response.totalHits} images."`);
+      loadMoreBtn.classList.remove('visually-hidden');
+    } else {
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+      loadMoreBtn.classList.add('visually-hidden');
+    }
+  } catch (error) {
+    Notiflix.Notify.failure(error);
+  }
 }
 
 function renderQueryCards({ hits }) {
@@ -63,16 +61,15 @@ function renderQueryCards({ hits }) {
   articlesContainer.insertAdjacentHTML('beforeEnd', markup);
 }
 
-function onLoadMore() {
-  newsApiService.fetchSearchQuery().then(data => {
-    renderQueryCards(data);
-    if (articlesContainer.children.length >= data.totalHits) {
-      Notiflix.Notify.info(
-        'We are sorry, but you have reached the end of search results.'
-      );
-      loadMoreBtn.classList.add('visually-hidden');
-    }
-  });
+async function onLoadMore() {
+  const response = await newsApiService.fetchSearchQuery();
+  renderQueryCards(response);
+  if (articlesContainer.children.length >= response.totalHits) {
+    Notiflix.Notify.info(
+      'We are sorry, but you have reached the end of search results.'
+    );
+    loadMoreBtn.classList.add('visually-hidden');
+  }
 }
 
 function clearContainer() {

@@ -19,6 +19,7 @@ export default class NewsApiService {
       return data;
     });
   }
+
   incrementPage() {
     this.page += 1;
   }
@@ -34,4 +35,4 @@ export default class NewsApiService {
   }
 }
 
-// export { NewsApiService };
+

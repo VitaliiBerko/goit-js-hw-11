@@ -1,6 +1,8 @@
 import './css/styles.css';
 import NewsApiService from './newsApiService';
 import Notiflix from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const formSubmitRefs = document.querySelector('#search-form');
 const articlesContainer = document.querySelector('.gallery');
@@ -12,9 +14,16 @@ loadMoreBtn.addEventListener('click', onLoadMore);
 
 loadMoreBtn.classList.add('visually-hidden');
 
+const lightBox = new SimpleLightbox('.gallery a');
+lightBox.on('show.simplelightbox');
+lightBox.refresh();
+
+
+
 async function onClickSearchBtn(e) {
   try {
     e.preventDefault();
+
     newsApiService.query = e.currentTarget.elements.searchQuery.value;
     newsApiService.resetPage();
 
@@ -37,9 +46,19 @@ async function onClickSearchBtn(e) {
 
 function renderQueryCards({ hits }) {
   const markup = hits
-    .map(({ webformatURL, tags, likes, views, comments, downloads }) => {
-      return `<div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" width ="340 px"/>
+    .map(
+      ({
+        webformatURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+        largeImageURL,
+      }) => {
+        return `<div class="photo-card">
+      <a href="${webformatURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy" width ="340 px"/></a>  
+  
   <div class="info">
     <p class="info-item">
       <b>Likes: ${likes}</b>
@@ -55,7 +74,8 @@ function renderQueryCards({ hits }) {
     </p>
   </div>
 </div>`;
-    })
+      }
+    )
     .join('');
 
   articlesContainer.insertAdjacentHTML('beforeEnd', markup);

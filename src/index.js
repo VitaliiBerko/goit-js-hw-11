@@ -16,14 +16,32 @@ loadMoreBtn.classList.add('visually-hidden');
 
 const lightBox = new SimpleLightbox('.gallery a');
 lightBox.on('show.simplelightbox');
-lightBox.refresh();
 
 
+window.addEventListener('scroll', () => {
+  const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+  // console.log(scrollHeight) // Висота всього документа в пікселях
+  // console.log(scrollTop)  // Скрол від верху в пікселях
+  // console.log(clientHeight) // Висота вьюпорта
+  // scrollHeight-clientHeight===topheightgi
+  if (scrollHeight - clientHeight === scrollTop) {
+    onLoadMore();
+  }
+});
+
+// const { height: cardHeight } = document
+//       .querySelector('.gallery')
+//       .firstElementChild.getBoundingClientRect();
+
+//     window.scrollBy({
+//       top: cardHeight * 2,
+//       behavior: 'smooth',
+//     });
 
 async function onClickSearchBtn(e) {
   try {
     e.preventDefault();
-
+    
     newsApiService.query = e.currentTarget.elements.searchQuery.value;
     newsApiService.resetPage();
 
@@ -79,6 +97,7 @@ function renderQueryCards({ hits }) {
     .join('');
 
   articlesContainer.insertAdjacentHTML('beforeEnd', markup);
+  lightBox.refresh();
 }
 
 async function onLoadMore() {
